@@ -1,0 +1,188 @@
+
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+demo/Security/server
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+#############################
+tantaka@tantakanoMBP server % openssl genrsa -aes256 -out serverprivate.key 2048
+Generating RSA private key, 2048 bit long modulus
+.........+++
+....................................................................................................................................................................+++
+e is 65537 (0x10001)
+Enter pass phrase for serverprivate.key:
+Verifying - Enter pass phrase for serverprivate.key:
+
+#############################
+tantaka@tantakanoMBP server % openssl req -x509 -new -nodes -key serverprivate.key -sha256 -days 1024 -out serverCA.crt
+Enter pass phrase for serverprivate.key:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) []:
+State or Province Name (full name) []:
+Locality Name (eg, city) []:
+Organization Name (eg, company) []:
+Organizational Unit Name (eg, section) []:
+Common Name (eg, fully qualified host name) []:B9cMw7qX
+Email Address []:
+
+#############################
+tantaka@tantakanoMBP server % keytool -import -file serverCA.crt -alias serverCA -keystore truststore.jks
+キーストアのパスワードを入力してください:
+新規パスワードを再入力してください:
+所有者: CN=B9cMw7qX
+発行者: CN=B9cMw7qX
+シリアル番号: 8a12cc45a8418855
+有効期間の開始日: Wed Mar 25 12:47:32 JST 2020 終了日: Fri Jan 13 12:47:32 JST 2023
+証明書のフィンガプリント:
+	 MD5:  4F:4C:71:98:BD:82:5D:41:C2:86:CB:A4:F5:94:66:30
+	 SHA1: E6:12:F8:8A:F6:54:3B:8D:78:87:75:F1:00:86:66:54:F5:9B:1F:FA
+	 SHA256: FB:3E:50:0B:D6:D6:EA:FB:CC:1B:45:0E:C0:B4:85:75:C8:11:DC:35:C9:21:C7:7B:01:81:26:C1:26:3A:FC:CA
+署名アルゴリズム名: SHA256withRSA
+サブジェクト公開キー・アルゴリズム: 2048ビットRSAキー
+バージョン: 1
+この証明書を信頼しますか。 [いいえ]:  はい
+証明書がキーストアに追加されました
+
+#############################
+tantaka@tantakanoMBP server % openssl pkcs12 -export -in serverCA.crt -inkey serverprivate.key -certfile serverCA.crt -out keystore.p12
+Enter pass phrase for serverprivate.key:
+Enter Export Password:
+Verifying - Enter Export Password:
+
+#############################
+tantaka@tantakanoMBP server % keytool -importkeystore -srckeystore keystore.p12 -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype JKS
+キーストアkeystore.p12をkeystore.jksにインポートしています...
+出力先キーストアのパスワードを入力してください:
+新規パスワードを再入力してください:
+ソース・キーストアのパスワードを入力してください:
+別名1のエントリのインポートに成功しました。
+インポート・コマンドが完了しました: 1件のエントリのインポートが成功しました。0件のエントリのインポートが失敗したか取り消されました
+
+Warning:
+JKSキーストアは独自の形式を使用しています。"keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.jks -deststoretype pkcs12"を使用する業界標準の形式であるPKCS12に移行することをお薦めします。
+
+*****************************
+tantaka@tantakanoMBP server % ls -la
+total 40
+drwxr-xr-x  7 tantaka  staff   224  3 25 12:50 .
+drwxr-xr-x  4 tantaka  staff   128  3 25 12:33 ..
+-rw-r--r--  1 tantaka  staff  2026  3 25 12:50 keystore.jks
+-rw-r--r--  1 tantaka  staff  3005  3 25 12:49 keystore.p12
+-rw-r--r--  1 tantaka  staff   973  3 25 12:47 serverCA.crt
+-rw-r--r--  1 tantaka  staff  1766  3 25 12:46 serverprivate.key
+-rw-r--r--  1 tantaka  staff   743  3 25 12:48 truststore.jks
+
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+demo/Security/client
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+
+#############################
+tantaka@tantakanoMBP client % openssl genrsa -aes256 -out clientprivate.key 2048
+Generating RSA private key, 2048 bit long modulus
+.........................................................................................................................................+++
+................................................................+++
+e is 65537 (0x10001)
+Enter pass phrase for clientprivate.key:
+Verifying - Enter pass phrase for clientprivate.key:
+
+
+#############################
+tantaka@tantakanoMBP client % openssl req -new -key clientprivate.key -out client.csr
+Enter pass phrase for clientprivate.key:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) []:
+State or Province Name (full name) []:
+Locality Name (eg, city) []:
+Organization Name (eg, company) []:
+Organizational Unit Name (eg, section) []:
+Common Name (eg, fully qualified host name) []:B9cMw7qX
+Email Address []:
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:B9cMw7qX
+
+#############################
+tantaka@tantakanoMBP client % openssl x509 -req -in client.csr -CA ../server/serverCA.crt -CAkey ../server/serverprivate.key -CAcreateserial -out client.crt -days 365 -sha256
+Signature ok
+subject=/CN=B9cMw7qX
+Getting CA Private Key
+Enter pass phrase for ../server/serverprivate.key:
+
+*****************************
+tantaka@tantakanoMBP client % ls -la
+total 32
+drwxr-xr-x  6 tantaka  staff   192  3 25 12:56 .
+drwxr-xr-x  4 tantaka  staff   128  3 25 12:33 ..
+-rw-r--r--  1 tantaka  staff    17  3 25 12:56 .srl
+-rw-r--r--  1 tantaka  staff   973  3 25 12:56 client.crt
+-rw-r--r--  1 tantaka  staff   924  3 25 12:54 client.csr
+-rw-r--r--  1 tantaka  staff  1766  3 25 12:52 clientprivate.key
+
+
+
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+demo/Security/client TEST
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+
+#############################
+tantaka@tantakanoMBP client % curl -ik --cert client.crt --key clientprivate.key https://localhost:8443/login -H 'userId: aaaa' -H 'password: bbbbb'
+Enter PEM pass phrase:B9cMw7qX
+HTTP/1.1 200
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+X-Frame-Options: DENY
+Content-Type: application/json
+Transfer-Encoding: chunked
+Date: Wed, 25 Mar 2020 04:16:16 GMT
+
+{"code":"success","message":"this is dummy.","token":"0080df94-530c-44e4-a742-170eb9b1eeae"}%
+
+
+
+#############################
+tantaka@tantakanoMBP client % curl -ik --cert client.crt --key clientprivate.key 'https://localhost:8443/login2?userId=aaaa&password=bbbbb'
+Enter PEM pass phrase:B9cMw7qX
+HTTP/1.1 200
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+Strict-Transport-Security: max-age=31536000 ; includeSubDomains
+X-Frame-Options: DENY
+Content-Type: application/json
+Transfer-Encoding: chunked
+Date: Wed, 25 Mar 2020 04:13:48 GMT
+
+{"code":"success","message":"this is dummy.","token":"368cd3cf-228d-472f-8e78-ff2b9a727277"}%
+
