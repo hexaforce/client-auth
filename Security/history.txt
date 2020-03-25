@@ -129,16 +129,40 @@ subject=/CN=B9cMw7qX
 Getting CA Private Key
 Enter pass phrase for ../server/serverprivate.key:
 
+#############################
+tantaka@tantakanoMBP client % openssl rsa -in clientprivate.key -out client.key
+Enter pass phrase for clientprivate.key:
+writing RSA key
+
+#############################
+tantaka@tantakanoMBP client % openssl pkcs12 -export -in client.crt -inkey client.key -out keystore.p12
+Enter Export Password:
+Verifying - Enter Export Password:
+
+#############################
+tantaka@tantakanoMBP client % keytool -importkeystore -srckeystore keystore.p12 -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype JKS
+キーストアkeystore.p12をkeystore.jksにインポートしています...
+出力先キーストアのパスワードを入力してください:  
+新規パスワードを再入力してください: 
+ソース・キーストアのパスワードを入力してください:  
+別名1のエントリのインポートに成功しました。
+インポート・コマンドが完了しました: 1件のエントリのインポートが成功しました。0件のエントリのインポートが失敗したか取り消されました
+
+Warning:
+JKSキーストアは独自の形式を使用しています。"keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.jks -deststoretype pkcs12"を使用する業界標準の形式であるPKCS12に移行することをお薦めします。
+
 *****************************
 tantaka@tantakanoMBP client % ls -la
-total 32
-drwxr-xr-x  6 tantaka  staff   192  3 25 12:56 .
-drwxr-xr-x  4 tantaka  staff   128  3 25 12:33 ..
+total 56
+drwxr-xr-x  9 tantaka  staff   288  3 25 14:58 .
+drwxr-xr-x  6 tantaka  staff   192  3 25 13:02 ..
 -rw-r--r--  1 tantaka  staff    17  3 25 12:56 .srl
 -rw-r--r--  1 tantaka  staff   973  3 25 12:56 client.crt
 -rw-r--r--  1 tantaka  staff   924  3 25 12:54 client.csr
+-rw-r--r--  1 tantaka  staff  1679  3 25 14:54 client.key
 -rw-r--r--  1 tantaka  staff  1766  3 25 12:52 clientprivate.key
-
+-rw-r--r--  1 tantaka  staff  2026  3 25 14:58 keystore.jks
+-rw-r--r--  1 tantaka  staff  2277  3 25 14:56 keystore.p12
 
 
 ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝

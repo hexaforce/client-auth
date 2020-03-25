@@ -1,0 +1,13 @@
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+server:
+  port: 8443
+  ssl:
+    key-store: classpath:keystore.jks
+    key-store-password: B9cMw7qX
+    trust-store: classpath:truststore.jks
+    trust-store-password: B9cMw7qX
+    client-auth: need
