@@ -135,12 +135,31 @@ Enter pass phrase for clientprivate.key:
 writing RSA key
 
 #############################
-tantaka@tantakanoMBP client % openssl pkcs12 -export -in client.crt -inkey client.key -out keystore.p12
+tantaka@tantakanoMBP client % openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name "B9cMw7qX"
 Enter Export Password:
 Verifying - Enter Export Password:
 
+
 #############################
-tantaka@tantakanoMBP client % keytool -importkeystore -srckeystore keystore.p12 -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype JKS
+tantaka@tantakanoMBP client % keytool -import -keystore .truststore.jks -file ../server/serverCA.crt -alias CA
+キーストアのパスワードを入力してください:  
+新規パスワードを再入力してください: 
+所有者: CN=B9cMw7qX
+発行者: CN=B9cMw7qX
+シリアル番号: 8a12cc45a8418855
+有効期間の開始日: Wed Mar 25 12:47:32 JST 2020 終了日: Fri Jan 13 12:47:32 JST 2023
+証明書のフィンガプリント:
+         MD5:  4F:4C:71:98:BD:82:5D:41:C2:86:CB:A4:F5:94:66:30
+         SHA1: E6:12:F8:8A:F6:54:3B:8D:78:87:75:F1:00:86:66:54:F5:9B:1F:FA
+         SHA256: FB:3E:50:0B:D6:D6:EA:FB:CC:1B:45:0E:C0:B4:85:75:C8:11:DC:35:C9:21:C7:7B:01:81:26:C1:26:3A:FC:CA
+署名アルゴリズム名: SHA256withRSA
+サブジェクト公開キー・アルゴリズム: 2048ビットRSAキー
+バージョン: 1
+この証明書を信頼しますか。 [いいえ]:  はい
+証明書がキーストアに追加されました
+
+#############################
+tantaka@tantakanoMBP client % keytool -importkeystore -srckeystore client.p12 -srcstoretype pkcs12 -destkeystore keystore.jks -deststoretype JKS
 キーストアkeystore.p12をkeystore.jksにインポートしています...
 出力先キーストアのパスワードを入力してください:  
 新規パスワードを再入力してください: 
@@ -210,3 +229,46 @@ Date: Wed, 25 Mar 2020 04:13:48 GMT
 
 {"code":"success","message":"this is dummy.","token":"368cd3cf-228d-472f-8e78-ff2b9a727277"}%
 
+
+
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+demo/Security/client TEST
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+tantaka@tantakanoMBP client % keytool -v -list -keystore truststore.jks 
+キーストアのパスワードを入力してください:  
+キーストアのタイプ: jks
+キーストア・プロバイダ: SUN
+
+キーストアには1エントリが含まれます
+
+別名: truststorekey
+作成日: 2020/03/26
+エントリ・タイプ: PrivateKeyEntry
+証明書チェーンの長さ: 1
+証明書[1]:
+所有者: CN=B9cMw7qX
+発行者: CN=B9cMw7qX
+シリアル番号: 6280e423
+有効期間の開始日: Thu Mar 26 11:12:32 JST 2020 終了日: Wed Jun 24 11:12:32 JST 2020
+証明書のフィンガプリント:
+         MD5:  D3:68:B0:D7:87:7F:06:FC:42:5B:6E:75:55:C3:87:2F
+         SHA1: 4F:68:B8:81:D2:10:72:E0:1C:1D:8E:8E:D7:48:B4:ED:F5:48:90:07
+         SHA256: F5:38:6C:0E:B0:03:55:33:EE:A6:40:36:DC:E0:E8:8A:6B:E7:F1:63:F1:00:4E:86:8B:CE:0D:3E:66:59:7F:C1
+署名アルゴリズム名: SHA256withRSA
+サブジェクト公開キー・アルゴリズム: 2048ビットRSAキー
+バージョン: 3
+
+拡張: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 5C 00 3B C1 1A 20 DB 23   15 79 C9 09 78 61 04 E1  \.;.. .#.y..xa..
+0010: C8 44 68 4A                                        .DhJ
+]
+]
